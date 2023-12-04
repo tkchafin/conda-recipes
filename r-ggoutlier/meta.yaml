@@ -1,0 +1,109 @@
+{% set version = '1.0.2' %}
+
+{% set posix = 'm2-' if win else '' %}
+{% set native = 'm2w64-' if win else '' %}
+
+package:
+  name: r-ggoutlier
+  version: {{ version|replace("-", "_") }}
+
+source:
+
+  git_url: https://github.com/kjschmidlab/GGoutlieR
+  git_tag: v1.0.2
+
+build:
+  merge_build_host: True  # [win]
+  # If this is a new build for the same version, increment the build number.
+  number: 0
+  # no skip
+  noarch: generic
+
+  # This is required to make R link correctly on Linux.
+  rpaths:
+    - lib/R/lib/
+    - lib/
+
+# Suggests: rnaturalearthdata
+requirements:
+  build:
+    - {{ posix }}filesystem        # [win]
+    - {{ posix }}git
+    - {{ posix }}zip               # [win]
+
+  host:
+    - r-base
+    - r-fastknn
+    - r-rcolorbrewer
+    - r-cowplot
+    - r-doparallel
+    - r-foreach
+    - r-ggforce
+    - r-ggplot2
+    - r-rlang
+    - r-rnaturalearth
+    - r-scales
+    - r-sf
+    - r-tidyr
+
+  run:
+    - r-base
+    - r-fastknn
+    - r-rcolorbrewer
+    - r-cowplot
+    - r-doparallel
+    - r-foreach
+    - r-ggforce
+    - r-ggplot2
+    - r-rlang
+    - r-rnaturalearth
+    - r-scales
+    - r-sf
+    - r-tidyr
+
+test:
+  commands:
+    # You can put additional test commands to be run here.
+    - $R -e "library('GGoutlieR')"           # [not win]
+    - "\"%R%\" -e \"library('GGoutlieR')\""  # [win]
+
+  # You can also put a file called run_test.py, run_test.sh, or run_test.bat
+  # in the recipe that will be run at test time.
+
+  # requires:
+    # Put any additional test requirements here.
+
+about:
+  home: https://github.com/kjschmidlab/GGoutlieR
+  license: MIT
+  summary: Identify and visualize individuals with unusual association patterns of genetics and
+    geography using the approach of Chang and Schmid (2023) <doi:10.1101/2023.04.06.535838>.
+    It detects potential outliers that violate the isolation-by-distance assumption
+    using the K-nearest neighbor approach. You can obtain a table of outliers with statistics
+    and visualize unusual geo-genetic patterns on a geographical map. This is useful
+    for landscape genomics studies to discover individuals with unusual geography and
+    genetics associations from a large biological sample.
+  license_family: MIT
+  license_file:
+    - '{{ environ["PREFIX"] }}/lib/R/share/licenses/MIT'
+    - LICENSE
+
+# The original CRAN metadata for this package was:
+
+# Package: GGoutlieR
+# Type: Package
+# Title: Identify Individuals with Unusual Geo-Genetic Patterns
+# Version: 1.0.2
+# Authors@R: c(person(given = "Che-Wei", family = "Chang", role = c("aut", "cre"), email = "cheweichang92@gmail.com", comment = c(ORCID = "0000-0001-6704-3732")), person(given = "Karl", family = "Schmid", role = c("ths"), email = "karl.schmid@uni-hohenheim.de", comment = c(ORCID = "0000-0001-5129-895X"), ))
+# Description: Identify and visualize individuals with unusual association patterns of genetics and geography using the approach of Chang and Schmid (2023) <doi:10.1101/2023.04.06.535838>. It detects potential outliers that violate the isolation-by-distance assumption using the K-nearest neighbor approach. You can obtain a table of outliers with statistics and visualize unusual geo-genetic patterns on a geographical map. This is useful for landscape genomics studies to discover individuals with unusual geography and genetics associations from a large biological sample.
+# License: MIT + file LICENSE
+# Depends: R (>= 3.5.0)
+# Imports: stats4, FastKNN, foreach, doParallel, parallel, scales, RColorBrewer, ggforce, rlang, stats, tidyr, utils, rnaturalearth, sf, ggplot2, cowplot
+# Suggests: rnaturalearthdata
+# Encoding: UTF-8
+# LazyData: true
+# RoxygenNote: 7.2.3
+
+# See
+# https://docs.conda.io/projects/conda-build for
+# more information about meta.yaml
