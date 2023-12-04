@@ -1,0 +1,84 @@
+{% set version = '0.0.1' %}
+
+{% set posix = 'm2-' if win else '' %}
+{% set native = 'm2w64-' if win else '' %}
+
+package:
+  name: r-fastknn
+  version: {{ version|replace("-", "_") }}
+
+source:
+  url:
+    - {{ cran_mirror }}/src/contrib/FastKNN_{{ version }}.tar.gz
+    - {{ cran_mirror }}/src/contrib/Archive/FastKNN/FastKNN_{{ version }}.tar.gz
+  sha256: 5a7bcbec070a01dc84713510d2a2f495f6e4f70f971d0dc0e2d8af3dfff2e8c7
+
+build:
+  merge_build_host: True  # [win]
+  # If this is a new build for the same version, increment the build number.
+  number: 0
+  # no skip
+  noarch: generic
+
+  # This is required to make R link correctly on Linux.
+  rpaths:
+    - lib/R/lib/
+    - lib/
+
+requirements:
+  build:
+    - {{ posix }}zip               # [win]
+
+  host:
+    - r-base >4.0
+    - r-assertthat
+    - r-pdist
+
+  run:
+    - r-base >4.0
+    - r-assertthat
+    - r-pdist
+
+test:
+  commands:
+    # You can put additional test commands to be run here.
+    - $R -e "library('FastKNN')"           # [not win]
+    - "\"%R%\" -e \"library('FastKNN')\""  # [win]
+
+  # You can also put a file called run_test.py, run_test.sh, or run_test.bat
+  # in the recipe that will be run at test time.
+
+  # requires:
+    # Put any additional test requirements here.
+
+about:
+  home: https://CRAN.R-project.org/package=FastKNN
+  license: GPL-3
+  summary: Compute labels for a test set according to the k-Nearest Neighbors classification.
+    This is a fast way to do k-Nearest Neighbors classification because the distance
+    matrix -between the features of the observations- is an input to the function rather
+    than being calculated in the function itself every time.
+  license_family: GPL3
+  license_file:
+    - '{{ environ["PREFIX"] }}/lib/R/share/licenses/GPL-3'
+
+# The original CRAN metadata for this package was:
+
+# Package: FastKNN
+# Type: Package
+# Title: Fast k-Nearest Neighbors
+# Version: 0.0.1
+# Date: 2015-02-11
+# Author: Gaston Besanson
+# Maintainer: Gaston Besanson <besanson@gmail.com>
+# Description: Compute labels for a test set according to the k-Nearest Neighbors classification. This is a fast way to do k-Nearest Neighbors classification because the distance matrix -between the features of the observations- is an input to the function rather than being calculated in the function itself every time.
+# License: GPL-3
+# Imports: pdist, assertthat
+# Packaged: 2015-02-12 18:39:41 UTC; DON
+# NeedsCompilation: no
+# Repository: CRAN
+# Date/Publication: 2015-02-12 22:37:24
+
+# See
+# https://docs.conda.io/projects/conda-build for
+# more information about meta.yaml
