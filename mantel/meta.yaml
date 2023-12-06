@@ -1,0 +1,52 @@
+{% set name = "mantel" %}
+{% set version = "2.2.0" %}
+
+channels:
+  - ecoevoinfo
+  - conda-forge
+  - bioconda
+  - defaults
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: 97686400c14a173dac543de5f163b992969608ceed8e64b4c620106026ecb30e
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
+  noarch: generic
+
+requirements:
+  host:
+    - numpy >=1.10
+    - pip
+    - python >=3.8
+    - scipy >=1.0
+    - setuptools
+    - setuptools_scm
+  run:
+    - numpy >=1.10
+    - python >=3.8
+    - scipy >=1.0
+    - setuptools
+
+test:
+  imports:
+    - mantel
+
+about:
+  home: "https://github.com/jwcarr/mantel"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Python implementation of the Mantel test, a significance test of the correlation between two distance matrices"
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - tkchafin
