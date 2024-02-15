@@ -1,0 +1,118 @@
+{% set version = '3.2.1' %}
+
+{% set posix = 'm2-' if win else '' %}
+{% set native = 'm2w64-' if win else '' %}
+
+package:
+  name: r-samc
+  version: {{ version|replace("-", "_") }}
+
+source:
+  url:
+    - {{ cran_mirror }}/src/contrib/samc_{{ version }}.tar.gz
+    - {{ cran_mirror }}/src/contrib/Archive/samc/samc_{{ version }}.tar.gz
+  sha256: a40d86acad3bd2d14b70b528fac50c97165a48b481ccb6dcef48dc94cc11b344
+
+build:
+  merge_build_host: True  # [win]
+  # If this is a new build for the same version, increment the build number.
+  number: 0
+  # no skip
+  noarch: generic
+
+  # This is required to make R link correctly on Linux.
+  rpaths:
+    - lib/R/lib/
+    - lib/
+
+# Suggests: knitr, rmarkdown, testthat, gdistance, viridisLite
+requirements:
+  build:
+    - {{ compiler('c') }}              # [not win]
+    - {{ compiler('m2w64_c') }}        # [win]
+    - {{ compiler('cxx') }}            # [not win]
+    - {{ compiler('m2w64_cxx') }}      # [win]
+    - {{ posix }}filesystem        # [win]
+    - {{ posix }}make
+    - {{ posix }}sed               # [win]
+    - {{ posix }}coreutils         # [win]
+    - {{ posix }}zip               # [win]
+
+  host:
+    - r-base >=4.3
+    - r-matrix >=1.5_3
+    - r-rcpp >=1.0.10
+    - r-rcppeigen >=0.3.3.9.3
+    - r-rcppthread >=2.1.3
+    - r-circular
+    - r-raster
+    - r-terra >=1.7_3
+
+  run:
+    - r-base >=4.3
+    - {{native}}gcc-libs         # [win]
+    - r-matrix >=1.5_3
+    - r-rcpp >=1.0.10
+    - r-rcppeigen >=0.3.3.9.3
+    - r-rcppthread >=2.1.3
+    - r-circular
+    - r-raster
+    - r-terra >=1.7_3
+
+test:
+  commands:
+    # You can put additional test commands to be run here.
+    - $R -e "library('samc')"           # [not win]
+    - "\"%R%\" -e \"library('samc')\""  # [win]
+
+  # You can also put a file called run_test.py, run_test.sh, or run_test.bat
+  # in the recipe that will be run at test time.
+
+  # requires:
+    # Put any additional test requirements here.
+
+about:
+  home: https://andrewmarx.github.io/samc/
+  license: GPL-3
+  summary: Implements functions for working with absorbing Markov chains. The implementation
+    is based on the framework described in "Toward a unified framework for connectivity
+    that disentangles movement and mortality in space and time" by Fletcher et al. (2019)
+    <doi:10.1111/ele.13333>, which applies them to spatial ecology. This framework incorporates
+    both resistance and absorption with spatial absorbing Markov chains (SAMC) to provide
+    several short-term and long-term predictions for metrics related to connectivity
+    in landscapes. Despite the ecological context of the framework, this package can
+    be used in any application of absorbing Markov chains.
+  license_family: GPL3
+  license_file:
+    - '{{ environ["PREFIX"] }}/lib/R/share/licenses/GPL-3'
+
+# The original CRAN metadata for this package was:
+
+# Package: samc
+# Type: Package
+# Title: Spatial Absorbing Markov Chains
+# Version: 3.2.1
+# Authors@R: c( person("Andrew", "Marx", , "ajm.rpackages@gmail.com", role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0002-7456-1631") ), person("Robert", "Fletcher", , , role = c("ctb"), comment = c(ORCID = "0000-0003-1717-5707") ), person("Miguel", "Acevedo", , , role = c("ctb"), comment = c(ORCID = "0000-0002-8289-1497") ), person("Jorge", "Sefair", , , role = c("ctb"), comment = c(ORCID = "0000-0002-5887-8938") ), person("Chao", "Wang", , , role = c("ctb"), comment = c(ORCID = "0000-0003-2706-5122") ), person("Hughes", "Josie", , , role = c("ctb"), comment = c(ORCID = "0000-0001-7875-9015") ), person("Barrett", "Griffin", , , role = c("ctb")) )
+# Description: Implements functions for working with absorbing Markov chains. The implementation is based on the framework described in "Toward a unified framework for connectivity that disentangles movement and mortality in space and time" by Fletcher et al. (2019) <doi:10.1111/ele.13333>, which applies them to spatial ecology. This framework incorporates both resistance and absorption with spatial absorbing Markov chains (SAMC) to provide several short-term and long-term predictions for metrics related to connectivity in landscapes. Despite the ecological context of the framework, this package can be used in any application of absorbing Markov chains.
+# License: GPL (>= 3)
+# URL: https://andrewmarx.github.io/samc/
+# BugReports: https://github.com/andrewmarx/samc/issues/
+# Encoding: UTF-8
+# LazyData: true
+# Depends: R (>= 3.6.0)
+# Imports: methods, Matrix (>= 1.5-3), raster, terra (>= 1.7-3), circular
+# RoxygenNote: 7.2.3
+# Suggests: knitr, rmarkdown, testthat, gdistance, viridisLite
+# VignetteBuilder: knitr
+# Collate: 'RcppExports.R' 'location-class.R' 'internal-classes.R' 'samc-class.R' 'absorption.R' 'check.R' 'cond_passage.R' 'data.R' 'visitation.R' 'dispersal.R' 'distribution.R' 'generics.R' 'internal-functions.R' 'locate.R' 'map.R' 'mortality.R' 'pairwise.R' 'rasterize.R' 'samc.R' 'survival.R' 'zzz.R'
+# LinkingTo: Rcpp (>= 1.0.10), RcppEigen (>= 0.3.3.9.3), RcppThread (>= 2.1.3)
+# NeedsCompilation: yes
+# Packaged: 2023-05-08 22:35:04 UTC; andrewjmarx
+# Author: Andrew Marx [aut, cre, cph] (<https://orcid.org/0000-0002-7456-1631>), Robert Fletcher [ctb] (<https://orcid.org/0000-0003-1717-5707>), Miguel Acevedo [ctb] (<https://orcid.org/0000-0002-8289-1497>), Jorge Sefair [ctb] (<https://orcid.org/0000-0002-5887-8938>), Chao Wang [ctb] (<https://orcid.org/0000-0003-2706-5122>), Hughes Josie [ctb] (<https://orcid.org/0000-0001-7875-9015>), Barrett Griffin [ctb]
+# Maintainer: Andrew Marx <ajm.rpackages@gmail.com>
+# Repository: CRAN
+# Date/Publication: 2023-05-09 07:00:02 UTC
+
+# See
+# https://docs.conda.io/projects/conda-build for
+# more information about meta.yaml

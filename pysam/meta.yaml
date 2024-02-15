@@ -1,52 +1,41 @@
-{% set name = "pysam" %}
 {% set version = "0.22.0" %}
 
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
+  - anaconda
   - defaults
 
 package:
-  name: "{{ name|lower }}"
-  version: "{{ version }}"
+  name: pysam
+  version: {{ version }}
 
 source:
-  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: ab7a46973cf0ab8c6ac327f4c3fb67698d7ccbeef8631a716898c6ba01ef3e45
+  url: https://github.com/pysam-developers/pysam/archive/v{{ version }}.tar.gz
 
 build:
   number: 0
-  script: "{{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
   noarch: generic
 
 requirements:
-  host:
-    - pip
-    - python >3.10
+  build:
+    - python >=3.10
+    - setuptools
+    - zlib
+    - cython
   run:
-    - python >3.10
-    - samtools
+    - python >=3.10
+    - zlib
+    - xz
+    - bzip2
     - htslib
-    - bcftools
 
 test:
   imports:
     - pysam
-    - pysam.include
-    - pysam.include.bcftools
-    - pysam.include.htslib
-    - pysam.include.htslib.htslib
-    - pysam.include.samtools
 
 about:
-  home: "https://github.com/pysam-developers/pysam"
+  home: https://github.com/pysam-developers/pysam
   license: MIT
-  license_family: MIT
-  license_file: 
-  summary: "Package for reading, manipulating, and writing genomic data"
-  doc_url: 
-  dev_url: 
+  summary: Pysam is a python module for reading and manipulating Samfiles. It's a lightweight wrapper of the samtools C-API. Pysam also includes an interface for tabix.
 
-extra:
-  recipe-maintainers:
-    - tkchafin
